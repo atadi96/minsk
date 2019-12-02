@@ -8,7 +8,8 @@
             "name":"Launch",
             "type": "coreclr",
             "request": "launch",
-            "program": "${workspaceFolder}/mc/bin/Debug/netcoreapp2.2/mc.dll",
+            "program": "${workspaceFolder}/mc/bin/Debug/netcoreapp3.0/mc.dll",
+            "args": [],
             "preLaunchTask": "build",
             "cwd":"${workspaceFolder}/mc",
             "console": "externalTerminal"
