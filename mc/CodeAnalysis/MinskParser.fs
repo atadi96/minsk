@@ -3,6 +3,14 @@ module internal CodeAnalysis.MinskParser
 open Syntax
 open Parser
 
+let precedence (kind: SyntaxKind) =
+    match kind with
+    | StarToken
+    | SlashToken -> 2
+    | PlusToken
+    | MinusToken -> 1
+    | _ -> 0
+
 let rec parsePrimary =
     parser {
         let! current = currentToken
@@ -15,42 +23,24 @@ let rec parsePrimary =
             let! token = expect NumberToken
             return LiteralExpression token
     }
-and parseFactor =
-    let rec binaryFactor (left:ExpressionSyntax): Parser<ExpressionSyntax> =
+and parseExpression =
+    let rec parseExpression parentPrecedence =
+        parser {
+            let! left = parsePrimary
+            return! parseBinaryPrecedence left parentPrecedence
+        }
+    and parseBinaryPrecedence left parentPrecedence =
         parser {
             let! current = currentToken
-            match current.Kind with
-            | StarToken
-            | SlashToken ->
-                let! op = nextToken
-                let! right = parsePrimary
-                return! binaryFactor (BinaryExpression (left, op, right))
-            | _ -> return left
+            let tokenPrecedence = current |> SyntaxNode.kind |> precedence
+            if tokenPrecedence = 0 || tokenPrecedence <= parentPrecedence then
+                return left
+            else
+                let! operatorToken = nextToken
+                let! right = parseExpression parentPrecedence
+                return! parseBinaryPrecedence (BinaryExpression(left,operatorToken,right)) tokenPrecedence
         }
-    parser {
-        let! left = parsePrimary
-        return! binaryFactor left
-    }
-and parseTerm =
-    let rec parseBinaryTerm (left:ExpressionSyntax): Parser<ExpressionSyntax> =
-        parser {
-            let! current = currentToken
-            match current.Kind with
-            | PlusToken
-            | MinusToken ->
-                let! op = nextToken
-                let! right = parseFactor
-                return! parseBinaryTerm (BinaryExpression (left, op, right))
-            | _ -> return left
-        }
-    parser {
-        let! left = parseFactor
-        return! parseBinaryTerm left
-    }
-and private parseExpression =
-    parser {
-        return! parseTerm
-    }
+    parseExpression 0
 let parseProgram =
     parser {
         let! exp = parseExpression
