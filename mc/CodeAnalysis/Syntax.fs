@@ -16,7 +16,7 @@ type SyntaxKind =
     | CloseParenthesisToken
 
     // Expressions
-    | NumberExpression
+    | LiteralExpression
     | BinaryExpression
     | ParenthesizedExpression
 
@@ -46,7 +46,7 @@ type ExpressionSyntax =
     interface ISyntaxNode with
         member this.Kind =
             match this with
-            | LiteralExpression _ -> SyntaxKind.NumberExpression
+            | LiteralExpression _ -> SyntaxKind.LiteralExpression
             | BinaryExpression _ -> SyntaxKind.BinaryExpression
             | ParenthesizedExpression _ -> SyntaxKind.ParenthesizedExpression
         member this.Children =
