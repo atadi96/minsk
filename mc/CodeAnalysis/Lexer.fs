@@ -1,4 +1,4 @@
-module CodeAnalysis.Lexer
+module internal CodeAnalysis.Lexer
 
 open Syntax
 open System

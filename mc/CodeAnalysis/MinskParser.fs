@@ -1,4 +1,4 @@
-module CodeAnalysis.MinskParser
+module internal CodeAnalysis.MinskParser
 
 open Syntax
 open Parser
@@ -13,7 +13,7 @@ let rec parsePrimary =
             return ParenthesizedExpression (left,expression,right)
         else
             let! token = expect NumberToken
-            return NumberExpression token
+            return LiteralExpression token
     }
 and parseFactor =
     let rec binaryFactor (left:ExpressionSyntax): Parser<ExpressionSyntax> =

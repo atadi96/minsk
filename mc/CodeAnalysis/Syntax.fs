@@ -3,16 +3,19 @@ module CodeAnalysis.Syntax
 type NumberTokenData = int
 
 type SyntaxKind =
-    | NumberToken
+    // Tokens
+    | BadToken
+    | EndOfFileToken
     | WhiteSpaceToken
+    | NumberToken
     | PlusToken
     | MinusToken
     | StarToken
     | SlashToken
     | OpenParenthesisToken
     | CloseParenthesisToken
-    | BadToken
-    | EndOfFileToken
+
+    // Expressions
     | NumberExpression
     | BinaryExpression
     | ParenthesizedExpression
@@ -37,18 +40,18 @@ type SyntaxToken(kind: SyntaxKind, position: int, text: string, value: obj) =
         member __.Children = Seq.empty
 
 type ExpressionSyntax =
-    | NumberExpression of SyntaxToken
+    | LiteralExpression of SyntaxToken
     | BinaryExpression of ExpressionSyntax * SyntaxToken * ExpressionSyntax
     | ParenthesizedExpression of SyntaxToken * ExpressionSyntax * SyntaxToken
     interface ISyntaxNode with
         member this.Kind =
             match this with
-            | NumberExpression _ -> SyntaxKind.NumberExpression
+            | LiteralExpression _ -> SyntaxKind.NumberExpression
             | BinaryExpression _ -> SyntaxKind.BinaryExpression
             | ParenthesizedExpression _ -> SyntaxKind.ParenthesizedExpression
         member this.Children =
             match this with
-            | NumberExpression token -> token :> ISyntaxNode |> Seq.singleton
+            | LiteralExpression token -> token :> ISyntaxNode |> Seq.singleton
             | BinaryExpression (l,op,r) ->
                 let node = SyntaxNode.from
                 [ node l; node op; node r ] |> Seq.ofList

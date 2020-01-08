@@ -12,7 +12,7 @@ let rec evaluateExpression (es: ExpressionSyntax) =
         | StarToken -> left * evaluateExpression right
         | SlashToken -> left / evaluateExpression right
         | _ -> failwith (sprintf "unsupported binary operator '%A' represented by text '%s'" op.Kind op.Text)
-    | NumberExpression token ->
+    | LiteralExpression token ->
         match token.Kind with
         | NumberToken -> token.Value :?> int
         | _ -> failwith (sprintf "unsupported number expression '%A' represented by text '%s'" token.Kind token.Text)
