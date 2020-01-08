@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CodeAnalysis/Syntax.fs" />
+    <Compile Include="CodeAnalysis/SyntaxFacts.fs" />
     <Compile Include="CodeAnalysis/Lexer.fs" />
     <Compile Include="CodeAnalysis/Parser.fs" />
     <Compile Include="CodeAnalysis/MinskParser.fs" />

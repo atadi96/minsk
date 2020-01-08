@@ -3,14 +3,6 @@ module internal CodeAnalysis.MinskParser
 open Syntax
 open Parser
 
-let precedence (kind: SyntaxKind) =
-    match kind with
-    | StarToken
-    | SlashToken -> 2
-    | PlusToken
-    | MinusToken -> 1
-    | _ -> 0
-
 let rec parsePrimary =
     parser {
         let! current = currentToken
@@ -32,7 +24,7 @@ and parseExpression =
     and parseBinaryPrecedence left parentPrecedence =
         parser {
             let! current = currentToken
-            let tokenPrecedence = current |> SyntaxNode.kind |> precedence
+            let tokenPrecedence = current |> SyntaxNode.kind |> SyntaxFacts.precedence
             if tokenPrecedence = 0 || tokenPrecedence <= parentPrecedence then
                 return left
             else
