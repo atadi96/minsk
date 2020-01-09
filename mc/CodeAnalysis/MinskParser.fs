@@ -18,13 +18,22 @@ let rec parsePrimary =
 and parseExpression =
     let rec parseExpression parentPrecedence =
         parser {
-            let! left = parsePrimary
+            let! current = currentToken
+            let! left =
+                match current.Kind |> SyntaxFacts.unaryPrecedence with
+                | p when p <> 0 && p >= parentPrecedence ->
+                    parser {
+                        let! operator = nextToken
+                        let! operand = parseExpression p
+                        return UnaryExpression (operator,operand)
+                    }
+                | _ -> parsePrimary
             return! parseBinaryPrecedence left parentPrecedence
         }
     and parseBinaryPrecedence left parentPrecedence =
         parser {
             let! current = currentToken
-            let tokenPrecedence = current |> SyntaxNode.kind |> SyntaxFacts.precedence
+            let tokenPrecedence = current |> SyntaxNode.kind |> SyntaxFacts.binaryPrecedence
             if tokenPrecedence = 0 || tokenPrecedence <= parentPrecedence then
                 return left
             else

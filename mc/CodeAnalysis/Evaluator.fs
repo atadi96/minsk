@@ -17,6 +17,12 @@ let rec evaluateExpression (es: ExpressionSyntax) =
         | NumberToken -> token.Value :?> int
         | _ -> failwith (sprintf "unsupported number expression '%A' represented by text '%s'" token.Kind token.Text)
     | ParenthesizedExpression (_,exp,_) -> evaluateExpression exp
+    | UnaryExpression (op,exp) ->
+        let operand = evaluateExpression exp;
+        match op.Kind with
+        | PlusToken -> operand
+        | MinusToken -> -operand
+        | other -> failwith (sprintf "Undexpected unary operator %A" other)
 
 let evaluate (se: SyntaxElement) =
     match se with

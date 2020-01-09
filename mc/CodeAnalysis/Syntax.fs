@@ -17,6 +17,7 @@ type SyntaxKind =
 
     // Expressions
     | LiteralExpression
+    | UnaryExpression
     | BinaryExpression
     | ParenthesizedExpression
 
@@ -43,21 +44,25 @@ type ExpressionSyntax =
     | LiteralExpression of SyntaxToken
     | BinaryExpression of ExpressionSyntax * SyntaxToken * ExpressionSyntax
     | ParenthesizedExpression of SyntaxToken * ExpressionSyntax * SyntaxToken
+    | UnaryExpression of SyntaxToken * ExpressionSyntax
     interface ISyntaxNode with
         member this.Kind =
             match this with
             | LiteralExpression _ -> SyntaxKind.LiteralExpression
             | BinaryExpression _ -> SyntaxKind.BinaryExpression
             | ParenthesizedExpression _ -> SyntaxKind.ParenthesizedExpression
+            | UnaryExpression _ -> SyntaxKind.UnaryExpression
         member this.Children =
+            let node = SyntaxNode.from
             match this with
             | LiteralExpression token -> token :> ISyntaxNode |> Seq.singleton
             | BinaryExpression (l,op,r) ->
-                let node = SyntaxNode.from
                 [ node l; node op; node r ] |> Seq.ofList
             | ParenthesizedExpression (oPar,exp,cPar) ->
-                let node = SyntaxNode.from
                 [ node oPar; node exp; node cPar ]
+                |> Seq.ofList
+            | UnaryExpression (op,exp) ->
+                [ node op; node exp]
                 |> Seq.ofList
 
 type SyntaxNode =
