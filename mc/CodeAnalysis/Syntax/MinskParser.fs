@@ -1,4 +1,4 @@
-module internal CodeAnalysis.MinskParser
+module internal CodeAnalysis.Syntax.MinskParser
 
 open Syntax
 open Parser

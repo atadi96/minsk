@@ -1,6 +1,6 @@
 module CodeAnalysis.Evaluator
 
-open Syntax
+open Syntax.Syntax
 
 let rec evaluateExpression (es: ExpressionSyntax) =
     match es with

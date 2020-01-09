@@ -1,4 +1,4 @@
-module internal CodeAnalysis.Parser
+module internal CodeAnalysis.Syntax.Parser
 
 open Syntax
 

@@ -1,4 +1,4 @@
-module CodeAnalysis.Syntax
+module CodeAnalysis.Syntax.Syntax
 
 type NumberTokenData = int
 

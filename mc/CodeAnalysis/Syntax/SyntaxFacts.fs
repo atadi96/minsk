@@ -1,4 +1,4 @@
-module internal CodeAnalysis.SyntaxFacts
+module internal CodeAnalysis.Syntax.SyntaxFacts
 
 open Syntax
 

@@ -2,6 +2,7 @@
 
 open System
 open CodeAnalysis
+open CodeAnalysis.Syntax
 
 [<EntryPoint>]
 let main _argv =
