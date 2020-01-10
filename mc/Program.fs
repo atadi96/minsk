@@ -3,6 +3,7 @@
 open System
 open CodeAnalysis
 open CodeAnalysis.Syntax
+open CodeAnalysis.Binding
 
 [<EntryPoint>]
 let main _argv =
@@ -27,12 +28,16 @@ let main _argv =
             if showTree then
                 tree |> Syntax.prettyPrint |> Seq.iter (printfn "%s")
             Console.ResetColor()
-            if diag |> List.isEmpty |> not then
+            let (boundTree,diag) =
+                tree
+                |> Binder.bind
+                |> Diagnostics.Diagnostics.run diag
+            if diag |> Array.isEmpty |> not then
                 Console.ForegroundColor <- ConsoleColor.DarkRed
                 for msg in diag do
                     printfn "%s" msg
                 Console.ResetColor()
-            else printfn "%i" (Evaluator.evaluate tree)
+            else printfn "%i" (Evaluator.evaluateExpression boundTree)
         | _ -> ()
 
     0 // return an integer exit code
