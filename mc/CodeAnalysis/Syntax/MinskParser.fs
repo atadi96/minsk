@@ -3,6 +3,7 @@ module internal CodeAnalysis.Syntax.MinskParser
 open Syntax
 open Parser
 
+#nowarn "40" // recursive value definition of the parser
 let rec parsePrimary =
     parser {
         let! current = currentToken
