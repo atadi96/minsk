@@ -1,4 +1,4 @@
-module CodeAnalysis.Binding
+namespace CodeAnalysis.Binding
 
 type internal BoundNodeKind =
     | LiteralExpression
