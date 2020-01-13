@@ -5,23 +5,28 @@ open CodeAnalysis.Binding
 let rec evaluateExpression (es: BoundExpression): obj =
     match es with
     | BoundBinaryExpression (left,op,right) ->
-        let left = evaluateExpression left :?> int
-        let right = evaluateExpression right :?> int
+        let left = evaluateExpression left
+        let right = evaluateExpression right
+        let i (x: obj) = x :?> int
+        let b (x: obj) = x :?> bool
         match op with
-        | Addition -> left + right :> obj
-        | Substraction -> left - right :> obj
-        | Multiplication -> left * right :> obj
-        | Division -> left / right :> obj
+        | Addition -> i left + i right :> obj
+        | Substraction -> i left - i right :> obj
+        | Multiplication -> i left * i right :> obj
+        | Division -> i left / i right :> obj
+        | LogicalAnd -> (b left && b right) :> obj
+        | LogicalOr -> (b left || b right) :> obj
         | _ -> failwith (sprintf "Unsupported binary operator '%A'." op)
     | BoundLiteralExpression value ->
         if isNull value then
             0 :> obj
         else value
     | BoundUnaryExpression (op,exp) ->
-        let operand = evaluateExpression exp :?> int
+        let operand = evaluateExpression exp
         match op with
-        | Identity -> operand :> obj
-        | Negation -> -operand :> obj
+        | Identity -> operand
+        | Negation -> -(operand :?> int) :> obj
+        | LogicalNegation -> operand :?> bool |> not :> obj
         | other -> failwith (sprintf "Undexpected unary operator %A" other)
 (*
 let evaluate (se: SyntaxElement) =

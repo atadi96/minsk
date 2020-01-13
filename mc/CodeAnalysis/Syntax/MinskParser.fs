@@ -16,7 +16,7 @@ let rec parsePrimary =
         | TrueKeyword
         | FalseKeyword ->
             let! keywordToken = nextToken
-            let value = current.Kind = TrueKeyword
+            let value = keywordToken.Kind = TrueKeyword
             return LiteralExpression (keywordToken, value)
         | _ ->
             let! token = expect NumberToken

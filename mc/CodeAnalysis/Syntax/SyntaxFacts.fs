@@ -5,15 +5,18 @@ open Syntax
 let binaryPrecedence (kind: SyntaxKind) =
     match kind with
     | StarToken
-    | SlashToken -> 2
+    | SlashToken -> 4
     | PlusToken
-    | MinusToken -> 1
+    | MinusToken -> 3
+    | AmpersandAmpersandToken -> 2
+    | PipePipeToken -> 1
     | _ -> 0
 
 let unaryPrecedence (kind: SyntaxKind) =
     match kind with
     | PlusToken
-    | MinusToken -> 3
+    | MinusToken
+    | BangToken -> 5
     | _ -> 0
 
 let getKeywordKind (keyword: string): Syntax.SyntaxKind =

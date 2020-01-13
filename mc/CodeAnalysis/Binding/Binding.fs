@@ -11,12 +11,15 @@ type internal IBoundNode =
 type BoundUnaryOperatorKind =
     | Identity
     | Negation
+    | LogicalNegation
 
 type BoundBinaryOperatorKind =
     | Addition
     | Substraction
     | Multiplication
     | Division
+    | LogicalAnd
+    | LogicalOr
 
 type BoundExpression =
     | BoundLiteralExpression of obj

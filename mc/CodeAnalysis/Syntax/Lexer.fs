@@ -8,10 +8,13 @@ type LexError = string
 let lex (text: string) : (SyntaxToken * LexError option) seq =
     let mutable position = 0
     let next() = position <- position + 1
-    let currentChar() =
-        if position >= text.Length then
+    let peek offset =
+        let index = position + offset
+        if index >= text.Length then
             char 0
-        else text.Chars position
+        else text.Chars index
+    let currentChar() = peek 0
+    let lookahead() = peek 1
     let charToken kind text =
         let token = SyntaxToken(kind, position, text, null)
         next()
@@ -28,6 +31,17 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
             | '/' -> yield charToken SlashToken "/", None
             | '(' -> yield charToken OpenParenthesisToken "(", None
             | ')' -> yield charToken CloseParenthesisToken ")", None
+            | '!' -> yield charToken BangToken "!", None
+            | '&' when lookahead() = '&' ->
+                let position = position
+                next ()
+                next ()
+                yield SyntaxToken(AmpersandAmpersandToken, position, "&&", null), None
+            | '|' when lookahead() = '|' ->
+                let position = position
+                next ()
+                next ()
+                yield SyntaxToken(PipePipeToken, position, "||", null), None
             | ch when Char.IsWhiteSpace ch ->
                 let start = position
                 while currentChar () |> Char.IsWhiteSpace do
