@@ -37,7 +37,7 @@ let main _argv =
                 for msg in diag do
                     printfn "%s" msg
                 Console.ResetColor()
-            else printfn "%i" (Evaluator.evaluateExpression boundTree)
+            else printfn "%A" (Evaluator.evaluateExpression boundTree)
         | _ -> ()
 
     0 // return an integer exit code

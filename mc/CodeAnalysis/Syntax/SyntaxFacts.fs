@@ -15,3 +15,9 @@ let unaryPrecedence (kind: SyntaxKind) =
     | PlusToken
     | MinusToken -> 3
     | _ -> 0
+
+let getKeywordKind (keyword: string): Syntax.SyntaxKind =
+    match keyword with
+    | "true" -> TrueKeyword
+    | "false" -> FalseKeyword
+    | _ -> IdentifierToken

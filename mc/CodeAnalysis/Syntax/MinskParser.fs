@@ -7,14 +7,20 @@ open Parser
 let rec parsePrimary =
     parser {
         let! current = currentToken
-        if current.Kind = OpenParenthesisToken then
+        match current.Kind with
+        | OpenParenthesisToken ->
             let! left = nextToken
             let! expression = parseExpression
             let! right = expect CloseParenthesisToken
             return ParenthesizedExpression (left,expression,right)
-        else
+        | TrueKeyword
+        | FalseKeyword ->
+            let! keywordToken = nextToken
+            let value = current.Kind = TrueKeyword
+            return LiteralExpression (keywordToken, value)
+        | _ ->
             let! token = expect NumberToken
-            return LiteralExpression token
+            return LiteralExpression (token, token.Value)
     }
 and parseExpression =
     let rec parseExpression parentPrecedence =

@@ -14,6 +14,11 @@ type SyntaxKind =
     | SlashToken
     | OpenParenthesisToken
     | CloseParenthesisToken
+    | IdentifierToken
+
+    // Keywords
+    | FalseKeyword
+    | TrueKeyword
 
     // Expressions
     | LiteralExpression
@@ -41,7 +46,7 @@ type SyntaxToken(kind: SyntaxKind, position: int, text: string, value: obj) =
         member __.Children = Seq.empty
 
 type ExpressionSyntax =
-    | LiteralExpression of SyntaxToken
+    | LiteralExpression of SyntaxToken * obj
     | BinaryExpression of ExpressionSyntax * SyntaxToken * ExpressionSyntax
     | ParenthesizedExpression of SyntaxToken * ExpressionSyntax * SyntaxToken
     | UnaryExpression of SyntaxToken * ExpressionSyntax
@@ -55,7 +60,7 @@ type ExpressionSyntax =
         member this.Children =
             let node = SyntaxNode.from
             match this with
-            | LiteralExpression token -> token :> ISyntaxNode |> Seq.singleton
+            | LiteralExpression (token,_) -> token :> ISyntaxNode |> Seq.singleton
             | BinaryExpression (l,op,r) ->
                 [ node l; node op; node r ] |> Seq.ofList
             | ParenthesizedExpression (oPar,exp,cPar) ->

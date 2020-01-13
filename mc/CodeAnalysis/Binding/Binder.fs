@@ -26,8 +26,8 @@ let bindBinaryOperator (kind: SyntaxKind) (lType:Type) (rType:Type) =
 
 let rec bindExpression (syntax: ExpressionSyntax): Diagnostics<BoundExpression> =
     match syntax with
-    | LiteralExpression st ->
-        diagnostics { return BoundLiteralExpression st.Value }
+    | LiteralExpression (_,value) ->
+        diagnostics { return BoundLiteralExpression value }
     | UnaryExpression (opToken,exp) ->
         diagnostics {
             let! boundExp = bindExpression exp

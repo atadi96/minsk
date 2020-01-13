@@ -2,22 +2,26 @@ module internal CodeAnalysis.Evaluator
 
 open CodeAnalysis.Binding
 
-let rec evaluateExpression (es: BoundExpression) =
+let rec evaluateExpression (es: BoundExpression): obj =
     match es with
     | BoundBinaryExpression (left,op,right) ->
-        let left = evaluateExpression left
+        let left = evaluateExpression left :?> int
+        let right = evaluateExpression right :?> int
         match op with
-        | Addition -> left + evaluateExpression right
-        | Substraction -> left - evaluateExpression right
-        | Multiplication -> left * evaluateExpression right
-        | Division -> left / evaluateExpression right
+        | Addition -> left + right :> obj
+        | Substraction -> left - right :> obj
+        | Multiplication -> left * right :> obj
+        | Division -> left / right :> obj
         | _ -> failwith (sprintf "Unsupported binary operator '%A'." op)
-    | BoundLiteralExpression value -> value :?> int
+    | BoundLiteralExpression value ->
+        if isNull value then
+            0 :> obj
+        else value
     | BoundUnaryExpression (op,exp) ->
-        let operand = evaluateExpression exp;
+        let operand = evaluateExpression exp :?> int
         match op with
-        | Identity -> operand
-        | Negation -> -operand
+        | Identity -> operand :> obj
+        | Negation -> -operand :> obj
         | other -> failwith (sprintf "Undexpected unary operator %A" other)
 (*
 let evaluate (se: SyntaxElement) =

@@ -42,6 +42,14 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
                 let length = position - start
                 let tokenText = text.Substring(start, length)
                 yield SyntaxToken(NumberToken, start, tokenText, Int32.Parse tokenText), None
+            | ch when Char.IsLetter ch ->
+                let start = position
+                while currentChar () |> Char.IsLetter do
+                    next()
+                let length = position - start
+                let tokenText = text.Substring(start, length)
+                let kind = SyntaxFacts.getKeywordKind tokenText
+                yield SyntaxToken(kind, start, tokenText, null), None
             | _ ->
                 let currentChar = currentChar()
                 let badToken = SyntaxToken(BadToken, position, currentChar |> string, null)
