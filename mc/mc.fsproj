@@ -11,6 +11,9 @@
     <Compile Include="CodeAnalysis/Syntax/MinskParser.fs" />
     <Compile Include="CodeAnalysis/Syntax/SyntaxTree.fs" />
     <Compile Include="CodeAnalysis/Binding/Binding.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundUnaryOperator.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundBinaryOperator.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundExpression.fs" />
     <Compile Include="CodeAnalysis/Binding/Diagnostics.fs" />
     <Compile Include="CodeAnalysis/Binding/Binder.fs" />
     <Compile Include="CodeAnalysis/Evaluator.fs" />

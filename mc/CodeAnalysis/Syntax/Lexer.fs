@@ -23,7 +23,7 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
         while true do
             if position >= text.Length then
                 yield SyntaxToken(EndOfFileToken, position, "\0", null), None
-            else        
+            else
             match currentChar() with
             | '+' -> yield charToken PlusToken "+", None
             | '-' -> yield charToken MinusToken "-", None
