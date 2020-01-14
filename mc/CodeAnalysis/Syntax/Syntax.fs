@@ -122,7 +122,7 @@ let prettyPrint (node: ISyntaxNode): string seq =
             let valueText = valueText node
             seq {
                 yield sprintf "%s%s%A%s" parentIndent marker node.Kind valueText
-                let indent = parentIndent + "| "
+                let indent = parentIndent + "|  "
                 yield! pp (node.Children |> Seq.toList) indent
                 yield! pp nodes parentIndent
             }
