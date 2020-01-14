@@ -20,3 +20,5 @@ type BoundBinaryOperatorKind =
     | Division
     | LogicalAnd
     | LogicalOr
+    | Equals
+    | NotEquals

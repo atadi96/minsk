@@ -9,12 +9,14 @@ type BoundBinaryOperator
     , resultType: System.Type) =
     new (syntaxKind: SyntaxKind, kind: BoundBinaryOperatorKind, operandType: System.Type) =
         BoundBinaryOperator(syntaxKind, kind, operandType, operandType, operandType)
+    new (syntaxKind: SyntaxKind, kind: BoundBinaryOperatorKind, operandType: System.Type, resultType: System.Type) =
+        BoundBinaryOperator(syntaxKind, kind, operandType, operandType, resultType)
 
     member __.SyntaxKind = syntaxKind
     member __.Kind = kind
     member __.LeftType = leftType
     member __.RightType = rightType
-    member __.ResultType = resultType
+    member __.Type = resultType
 
 module BoundBinaryOperator =
     let private operators =
@@ -23,6 +25,10 @@ module BoundBinaryOperator =
             BoundBinaryOperator(MinusToken, Substraction, typeof<int>)
             BoundBinaryOperator(StarToken, Multiplication, typeof<int>)
             BoundBinaryOperator(SlashToken, Division, typeof<int>)
+            BoundBinaryOperator(EqualsEqualsToken, Equals, typeof<int>, typeof<bool>)
+            BoundBinaryOperator(BangEqualsToken, NotEquals, typeof<int>, typeof<bool>)
+            BoundBinaryOperator(EqualsEqualsToken, Equals, typeof<bool>)
+            BoundBinaryOperator(BangEqualsToken, NotEquals, typeof<bool>)
             BoundBinaryOperator(AmpersandAmpersandToken, LogicalAnd, typeof<bool>)
             BoundBinaryOperator(PipePipeToken, LogicalOr, typeof<bool>)
         ]

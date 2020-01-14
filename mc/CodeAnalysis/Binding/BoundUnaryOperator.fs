@@ -13,7 +13,7 @@ type BoundUnaryOperator
     member __.SyntaxKind = syntaxKind
     member __.Kind = kind
     member __.OperandType = operandType
-    member __.ResultType = resultType
+    member __.Type = resultType
 
 
 module BoundUnaryOperator =

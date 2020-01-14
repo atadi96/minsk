@@ -5,9 +5,11 @@ open Syntax
 let binaryPrecedence (kind: SyntaxKind) =
     match kind with
     | StarToken
-    | SlashToken -> 4
+    | SlashToken -> 5
     | PlusToken
-    | MinusToken -> 3
+    | MinusToken -> 4
+    | EqualsEqualsToken
+    | BangEqualsToken -> 3
     | AmpersandAmpersandToken -> 2
     | PipePipeToken -> 1
     | _ -> 0
@@ -16,7 +18,7 @@ let unaryPrecedence (kind: SyntaxKind) =
     match kind with
     | PlusToken
     | MinusToken
-    | BangToken -> 5
+    | BangToken -> 6
     | _ -> 0
 
 let getKeywordKind (keyword: string): Syntax.SyntaxKind =

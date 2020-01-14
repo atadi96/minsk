@@ -14,5 +14,5 @@ type BoundExpression =
     member this.Type =
         match this with
         | BoundLiteralExpression value -> value.GetType()
-        | BoundUnaryExpression (_,be) -> be.Type
-        | BoundBinaryExpression (l,_,_) -> l.Type
+        | BoundUnaryExpression (op,_) -> op.Type
+        | BoundBinaryExpression (_,op,_) -> op.Type

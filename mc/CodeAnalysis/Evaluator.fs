@@ -16,6 +16,8 @@ let rec evaluateExpression (es: BoundExpression): obj =
         | Division -> i left / i right :> obj
         | LogicalAnd -> (b left && b right) :> obj
         | LogicalOr -> (b left || b right) :> obj
+        | Equals -> obj.Equals(left, right) :> obj
+        | NotEquals -> not (obj.Equals(left, right)) :> obj
     | BoundLiteralExpression value ->
         if isNull value then
             0 :> obj

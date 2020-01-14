@@ -35,18 +35,18 @@ and parseExpression =
                         return UnaryExpression (operator,operand)
                     }
                 | _ -> parsePrimary
-            return! parseBinaryPrecedence left parentPrecedence
-        }
-    and parseBinaryPrecedence left parentPrecedence =
-        parser {
-            let! current = currentToken
-            let tokenPrecedence = current |> SyntaxNode.kind |> SyntaxFacts.binaryPrecedence
-            if tokenPrecedence = 0 || tokenPrecedence <= parentPrecedence then
-                return left
-            else
-                let! operatorToken = nextToken
-                let! right = parseExpression parentPrecedence
-                return! parseBinaryPrecedence (BinaryExpression(left,operatorToken,right)) tokenPrecedence
+            let rec parseHigherPrecedenceTerm left =
+                parser {
+                    let! current = currentToken
+                    let tokenPrecedence = current |> SyntaxNode.kind |> SyntaxFacts.binaryPrecedence
+                    if tokenPrecedence = 0 || tokenPrecedence <= parentPrecedence then
+                        return left
+                    else
+                        let! operatorToken = nextToken
+                        let! right = parseExpression tokenPrecedence
+                        return! parseHigherPrecedenceTerm (BinaryExpression(left,operatorToken,right))
+                }
+            return! parseHigherPrecedenceTerm left
         }
     parseExpression 0
 let parseProgram =

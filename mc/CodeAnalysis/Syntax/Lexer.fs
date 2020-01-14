@@ -19,6 +19,10 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
         let token = SyntaxToken(kind, position, text, null)
         next()
         token
+    let positionAndStep n =
+        let p = position
+        for i in 1..n do next()
+        p
     seq {
         while true do
             if position >= text.Length then
@@ -33,15 +37,13 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
             | ')' -> yield charToken CloseParenthesisToken ")", None
             | '!' -> yield charToken BangToken "!", None
             | '&' when lookahead() = '&' ->
-                let position = position
-                next ()
-                next ()
-                yield SyntaxToken(AmpersandAmpersandToken, position, "&&", null), None
+                yield SyntaxToken(AmpersandAmpersandToken, positionAndStep 2, "&&", null), None
             | '|' when lookahead() = '|' ->
-                let position = position
-                next ()
-                next ()
-                yield SyntaxToken(PipePipeToken, position, "||", null), None
+                yield SyntaxToken(PipePipeToken, positionAndStep 2, "||", null), None
+            | '=' when lookahead() = '=' ->
+                yield SyntaxToken(EqualsEqualsToken, positionAndStep 2, "==", null), None
+            | '!' when lookahead() = '=' ->
+                yield SyntaxToken(BangEqualsToken, positionAndStep 2, "!=", null), None
             | ch when Char.IsWhiteSpace ch ->
                 let start = position
                 while currentChar () |> Char.IsWhiteSpace do
