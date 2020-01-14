@@ -1,4 +1,4 @@
-module CodeAnalysis.Parser
+module internal CodeAnalysis.Syntax.Parser
 
 open Syntax
 
@@ -20,7 +20,7 @@ type private ParserState =
         }
     member this.Diagnostics text = { this with diagnostics = this.diagnostics @ [ text ] }
     member this.NextToken = this.Current, this.Skip
-    member this.Match (kind: SyntaxKind) =
+    member this.MatchToken (kind: SyntaxKind) =
         if this.Current.Kind = kind then
             this.NextToken
         else
@@ -69,7 +69,7 @@ let run (PS parser) tokens =
 let peek n = PS (fun s -> s.Peek n, s)
 let currentToken = PS (fun s -> s.Current, s)
 let nextToken = PS (fun s -> s.NextToken)
-let expect kind = PS (fun s -> s.Match kind)
+let expect kind = PS (fun s -> s.MatchToken kind)
 let diagnostics text = PS (fun s -> (), s.Diagnostics text)
 
 let parser = ParserBuilder()

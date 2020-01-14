@@ -1,19 +1,33 @@
-module SyntaxKind
+module CodeAnalysis.Syntax.Syntax
 
 type NumberTokenData = int
 
 type SyntaxKind =
-    | NumberToken
+    // Tokens
+    | BadToken
+    | EndOfFileToken
     | WhiteSpaceToken
+    | NumberToken
     | PlusToken
     | MinusToken
     | StarToken
     | SlashToken
+    | BangToken
+    | AmpersandAmpersandToken
+    | PipePipeToken
+    | EqualsEqualsToken
+    | BangEqualsToken
     | OpenParenthesisToken
     | CloseParenthesisToken
-    | BadToken
-    | EndOfFileToken
-    | NumberExpression
+    | IdentifierToken
+
+    // Keywords
+    | FalseKeyword
+    | TrueKeyword
+
+    // Expressions
+    | LiteralExpression
+    | UnaryExpression
     | BinaryExpression
     | ParenthesizedExpression
 
@@ -37,24 +51,28 @@ type SyntaxToken(kind: SyntaxKind, position: int, text: string, value: obj) =
         member __.Children = Seq.empty
 
 type ExpressionSyntax =
-    | NumberExpression of SyntaxToken
+    | LiteralExpression of SyntaxToken * obj
     | BinaryExpression of ExpressionSyntax * SyntaxToken * ExpressionSyntax
     | ParenthesizedExpression of SyntaxToken * ExpressionSyntax * SyntaxToken
+    | UnaryExpression of SyntaxToken * ExpressionSyntax
     interface ISyntaxNode with
         member this.Kind =
             match this with
-            | NumberExpression _ -> SyntaxKind.NumberExpression
+            | LiteralExpression _ -> SyntaxKind.LiteralExpression
             | BinaryExpression _ -> SyntaxKind.BinaryExpression
             | ParenthesizedExpression _ -> SyntaxKind.ParenthesizedExpression
+            | UnaryExpression _ -> SyntaxKind.UnaryExpression
         member this.Children =
+            let node = SyntaxNode.from
             match this with
-            | NumberExpression token -> token :> ISyntaxNode |> Seq.singleton
+            | LiteralExpression (token,_) -> token :> ISyntaxNode |> Seq.singleton
             | BinaryExpression (l,op,r) ->
-                let node = SyntaxNode.from
                 [ node l; node op; node r ] |> Seq.ofList
             | ParenthesizedExpression (oPar,exp,cPar) ->
-                let node = SyntaxNode.from
                 [ node oPar; node exp; node cPar ]
+                |> Seq.ofList
+            | UnaryExpression (op,exp) ->
+                [ node op; node exp]
                 |> Seq.ofList
 
 type SyntaxNode =
@@ -104,7 +122,7 @@ let prettyPrint (node: ISyntaxNode): string seq =
             let valueText = valueText node
             seq {
                 yield sprintf "%s%s%A%s" parentIndent marker node.Kind valueText
-                let indent = parentIndent + "| "
+                let indent = parentIndent + "|  "
                 yield! pp (node.Children |> Seq.toList) indent
                 yield! pp nodes parentIndent
             }

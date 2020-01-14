@@ -2,15 +2,11 @@
 
 open System
 open CodeAnalysis
-            
-let withColor c f =
-    let color = Console.ForegroundColor
-    Console.ForegroundColor <- c
-    f()
-    Console.ForegroundColor <- color
+open CodeAnalysis.Syntax
+open CodeAnalysis.Binding
 
 [<EntryPoint>]
-let main argv =
+let main _argv =
     printfn "Hello World from F#!"
     let mutable showTree = false
     while true do
@@ -28,16 +24,20 @@ let main argv =
             Console.Clear()
         | line when not (String.IsNullOrWhiteSpace(line)) ->
             let (tree,diag) = SyntaxTree.parse line
-            withColor ConsoleColor.DarkGray (fun () ->
-                if showTree then
-                    tree |> Syntax.prettyPrint |> Seq.iter (printfn "%s")
-            )
-            if diag |> List.isEmpty |> not then
-                withColor ConsoleColor.DarkRed (fun () ->
-                    for msg in diag do
-                        printfn "%s" msg
-                )
-            else printfn "%i" (Evaluator.evaluate tree)
+            Console.ForegroundColor <- ConsoleColor.DarkGray
+            if showTree then
+                tree |> Syntax.prettyPrint |> Seq.iter (printfn "%s")
+            Console.ResetColor()
+            let (boundTree,diag) =
+                tree
+                |> Binder.bind
+                |> Diagnostics.Diagnostics.run diag
+            if diag |> Array.isEmpty |> not then
+                Console.ForegroundColor <- ConsoleColor.DarkRed
+                for msg in diag do
+                    printfn "%s" msg
+                Console.ResetColor()
+            else printfn "%A" (Evaluator.evaluateExpression boundTree)
         | _ -> ()
 
     0 // return an integer exit code

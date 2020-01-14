@@ -4,11 +4,18 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CodeAnalysis/Syntax.fs" />
-    <Compile Include="CodeAnalysis/Lexer.fs" />
-    <Compile Include="CodeAnalysis/Parser.fs" />
-    <Compile Include="CodeAnalysis/MinskParser.fs" />
-    <Compile Include="CodeAnalysis/SyntaxTree.fs" />
+    <Compile Include="CodeAnalysis/Syntax/Syntax.fs" />
+    <Compile Include="CodeAnalysis/Syntax/SyntaxFacts.fs" />
+    <Compile Include="CodeAnalysis/Syntax/Lexer.fs" />
+    <Compile Include="CodeAnalysis/Syntax/Parser.fs" />
+    <Compile Include="CodeAnalysis/Syntax/MinskParser.fs" />
+    <Compile Include="CodeAnalysis/Syntax/SyntaxTree.fs" />
+    <Compile Include="CodeAnalysis/Binding/Binding.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundUnaryOperator.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundBinaryOperator.fs" />
+    <Compile Include="CodeAnalysis/Binding/BoundExpression.fs" />
+    <Compile Include="CodeAnalysis/Binding/Diagnostics.fs" />
+    <Compile Include="CodeAnalysis/Binding/Binder.fs" />
     <Compile Include="CodeAnalysis/Evaluator.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

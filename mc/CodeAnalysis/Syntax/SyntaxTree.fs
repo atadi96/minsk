@@ -1,4 +1,4 @@
-module CodeAnalysis.SyntaxTree
+module CodeAnalysis.Syntax.SyntaxTree
 
 let parse (text: string) =
     text

@@ -1,4 +1,4 @@
-module CodeAnalysis.Lexer
+module internal CodeAnalysis.Syntax.Lexer
 
 open Syntax
 open System
@@ -8,19 +8,26 @@ type LexError = string
 let lex (text: string) : (SyntaxToken * LexError option) seq =
     let mutable position = 0
     let next() = position <- position + 1
-    let currentChar() =
-        if position >= text.Length then
+    let peek offset =
+        let index = position + offset
+        if index >= text.Length then
             char 0
-        else text.Chars position
+        else text.Chars index
+    let currentChar() = peek 0
+    let lookahead() = peek 1
     let charToken kind text =
         let token = SyntaxToken(kind, position, text, null)
         next()
         token
+    let positionAndStep n =
+        let p = position
+        for i in 1..n do next()
+        p
     seq {
         while true do
             if position >= text.Length then
                 yield SyntaxToken(EndOfFileToken, position, "\0", null), None
-            else        
+            else
             match currentChar() with
             | '+' -> yield charToken PlusToken "+", None
             | '-' -> yield charToken MinusToken "-", None
@@ -28,6 +35,15 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
             | '/' -> yield charToken SlashToken "/", None
             | '(' -> yield charToken OpenParenthesisToken "(", None
             | ')' -> yield charToken CloseParenthesisToken ")", None
+            | '!' -> yield charToken BangToken "!", None
+            | '&' when lookahead() = '&' ->
+                yield SyntaxToken(AmpersandAmpersandToken, positionAndStep 2, "&&", null), None
+            | '|' when lookahead() = '|' ->
+                yield SyntaxToken(PipePipeToken, positionAndStep 2, "||", null), None
+            | '=' when lookahead() = '=' ->
+                yield SyntaxToken(EqualsEqualsToken, positionAndStep 2, "==", null), None
+            | '!' when lookahead() = '=' ->
+                yield SyntaxToken(BangEqualsToken, positionAndStep 2, "!=", null), None
             | ch when Char.IsWhiteSpace ch ->
                 let start = position
                 while currentChar () |> Char.IsWhiteSpace do
@@ -42,6 +58,14 @@ let lex (text: string) : (SyntaxToken * LexError option) seq =
                 let length = position - start
                 let tokenText = text.Substring(start, length)
                 yield SyntaxToken(NumberToken, start, tokenText, Int32.Parse tokenText), None
+            | ch when Char.IsLetter ch ->
+                let start = position
+                while currentChar () |> Char.IsLetter do
+                    next()
+                let length = position - start
+                let tokenText = text.Substring(start, length)
+                let kind = SyntaxFacts.getKeywordKind tokenText
+                yield SyntaxToken(kind, start, tokenText, null), None
             | _ ->
                 let currentChar = currentChar()
                 let badToken = SyntaxToken(BadToken, position, currentChar |> string, null)
