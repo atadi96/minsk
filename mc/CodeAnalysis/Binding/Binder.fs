@@ -32,6 +32,7 @@ let rec bindExpression (syntax: ExpressionSyntax): Diagnostics<BoundExpression> 
                 do! diagnose (sprintf "Binary operator '%s' is not defined for types '%A' and '%A'." opToken.Text lType rType)
                 return boundLeft
         }
+    | ParenthesizedExpression (_,exp,_) -> bindExpression exp
 
 let bind (se: SyntaxElement) =
     match se with
